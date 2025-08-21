@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import nortLogo from '@/assets/nort-logo.png';
 
 interface HeaderProps {
@@ -10,35 +11,41 @@ interface HeaderProps {
 
 export const Header = ({ variant = 'landing', onLoginClick }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const navItems = [
-    { label: 'Produto', href: '#produto' },
-    { label: 'Casos de Uso', href: '#casos-uso' },
-    { label: 'Como Funciona', href: '#como-funciona' },
-    { label: 'Contato', href: '#contato' },
+    { label: 'Sobre', href: '/sobre' },
+    { label: 'Funcionalidades', href: '/funcionalidades' },
+    { label: 'Casos de Uso', href: '/casos-de-uso' },
+    { label: 'Como Funciona', href: '/como-funciona' },
+    { label: 'Contato', href: '/contato' },
   ];
+
+  const handleDemoClick = () => {
+    navigate('/contato');
+  };
 
   return (
     <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <img src={nortLogo} alt="NORT" className="h-8 w-auto" />
             <span className="text-xl font-bold text-foreground">NORT</span>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           {variant === 'landing' && (
             <nav className="hidden md:flex items-center space-x-8">
               {navItems.map((item) => (
-                <a
+                <Link
                   key={item.label}
-                  href={item.href}
+                  to={item.href}
                   className="text-muted-foreground hover:text-foreground transition-colors duration-200"
                 >
                   {item.label}
-                </a>
+                </Link>
               ))}
             </nav>
           )}
@@ -52,7 +59,7 @@ export const Header = ({ variant = 'landing', onLoginClick }: HeaderProps) => {
             >
               Login
             </Button>
-            <Button variant="hero" size="lg">
+            <Button variant="hero" size="lg" onClick={handleDemoClick}>
               Solicitar Demo
             </Button>
           </div>
@@ -71,20 +78,20 @@ export const Header = ({ variant = 'landing', onLoginClick }: HeaderProps) => {
           <div className="md:hidden py-4 border-t border-border">
             <nav className="flex flex-col space-y-4">
               {navItems.map((item) => (
-                <a
+                <Link
                   key={item.label}
-                  href={item.href}
+                  to={item.href}
                   className="text-muted-foreground hover:text-foreground transition-colors duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
-                </a>
+                </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-4">
                 <Button variant="outline" onClick={onLoginClick}>
                   Login
                 </Button>
-                <Button variant="hero">
+                <Button variant="hero" onClick={handleDemoClick}>
                   Solicitar Demo
                 </Button>
               </div>
