@@ -1,169 +1,432 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { 
   Users, 
   Clock, 
   TrendingUp, 
-  DollarSign,
+  Activity, 
+  CalendarIcon, 
+  Filter,
+  BarChart3,
+  PieChart,
+  TrendingDown,
   Eye,
+  MapPin,
+  Timer,
+  Zap,
+  Target,
+  ArrowRight,
   ArrowUp,
-  ArrowDown,
-  Activity
+  ArrowDown
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 
-const MetricCard = ({ title, value, change, changeType, icon: Icon, description }: {
+interface KPICardProps {
   title: string;
   value: string;
-  change: string;
-  changeType: 'positive' | 'negative';
-  icon: any;
+  change?: string;
+  changeType?: 'positive' | 'negative' | 'neutral';
+  icon: React.ReactNode;
+}
+
+const KPICard = ({ title, value, change, changeType = 'neutral', icon }: KPICardProps) => {
+  const changeColor = {
+    positive: 'text-green-600',
+    negative: 'text-red-600',
+    neutral: 'text-muted-foreground'
+  }[changeType];
+
+  return (
+    <Card className="bg-gradient-card border-border hover:border-primary/20 transition-all duration-300">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground mb-1">{title}</p>
+            <p className="text-3xl font-bold text-foreground">{value}</p>
+            {change && (
+              <div className="flex items-center mt-1">
+                {changeType === 'positive' && <ArrowUp className="h-3 w-3 text-green-600 mr-1" />}
+                {changeType === 'negative' && <ArrowDown className="h-3 w-3 text-red-600 mr-1" />}
+                <p className={`text-sm ${changeColor}`}>{change}</p>
+              </div>
+            )}
+          </div>
+          <div className="text-primary text-2xl">
+            {icon}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+interface FilterBarProps {
+  dateRange: { from: Date | undefined; to: Date | undefined };
+  setDateRange: (range: { from: Date | undefined; to: Date | undefined }) => void;
+  gender: string;
+  setGender: (gender: string) => void;
+  store: string;
+  setStore: (store: string) => void;
+}
+
+const FilterBar = ({ dateRange, setDateRange, gender, setGender, store, setStore }: FilterBarProps) => {
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  const datePresets = [
+    { label: 'Hoje', value: 'today' },
+    { label: 'Esta Semana', value: 'week' },
+    { label: 'Este Mês', value: 'month' },
+  ];
+
+  const handlePresetClick = (preset: string) => {
+    const today = new Date();
+    switch (preset) {
+      case 'today':
+        setDateRange({ from: today, to: today });
+        break;
+      case 'week':
+        const weekStart = new Date(today.setDate(today.getDate() - today.getDay()));
+        const weekEnd = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+        setDateRange({ from: weekStart, to: weekEnd });
+        break;
+      case 'month':
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        setDateRange({ from: monthStart, to: monthEnd });
+        break;
+    }
+    setIsCalendarOpen(false);
+  };
+
+  return (
+    <Card className="bg-gradient-card border-border mb-6">
+      <CardContent className="p-6">
+        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+          <div className="flex items-center gap-2">
+            <Filter className="h-5 w-5 text-primary" />
+            <span className="font-semibold text-foreground">Filtros Globais</span>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-4 flex-1">
+            {/* Date Range Filter */}
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-muted-foreground">Período</label>
+              <div className="flex gap-2">
+                {datePresets.map((preset) => (
+                  <Button
+                    key={preset.value}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePresetClick(preset.value)}
+                    className="text-xs"
+                  >
+                    {preset.label}
+                  </Button>
+                ))}
+                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className={cn("text-xs", !dateRange.from && "text-muted-foreground")}>
+                      <CalendarIcon className="mr-2 h-3 w-3" />
+                      {dateRange.from 
+                        ? `${format(dateRange.from, "dd/MM")} - ${dateRange.to ? format(dateRange.to, "dd/MM") : "..."}`
+                        : "Personalizado"
+                      }
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="range"
+                      selected={dateRange}
+                      onSelect={(range) => setDateRange(range as { from: Date | undefined; to: Date | undefined } || { from: undefined, to: undefined })}
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+
+            {/* Gender Filter */}
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-muted-foreground">Gênero</label>
+              <Select value={gender} onValueChange={setGender}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="male">Masculino</SelectItem>
+                  <SelectItem value="female">Feminino</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Store Selector */}
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-muted-foreground">Loja</label>
+              <Select value={store} onValueChange={setStore}>
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as Lojas</SelectItem>
+                  <SelectItem value="store1">Loja Centro - SP</SelectItem>
+                  <SelectItem value="store2">Loja Shopping Vila Madalena</SelectItem>
+                  <SelectItem value="store3">Loja Paulista</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+const MockChart = ({ title, description, icon: Icon, height = "h-64" }: {
+  title: string;
   description: string;
+  icon: any;
+  height?: string;
 }) => (
-  <Card className="bg-gradient-card border-border hover:border-primary/20 transition-all duration-200">
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium text-muted-foreground">
-        {title}
-      </CardTitle>
-      <Icon className="h-4 w-4 text-primary" />
-    </CardHeader>
-    <CardContent>
-      <div className="text-2xl font-bold text-foreground mb-1">{value}</div>
-      <div className="flex items-center text-xs">
-        {changeType === 'positive' ? (
-          <ArrowUp className="h-3 w-3 text-success mr-1" />
-        ) : (
-          <ArrowDown className="h-3 w-3 text-destructive mr-1" />
-        )}
-        <span className={changeType === 'positive' ? 'text-success' : 'text-destructive'}>
-          {change}
-        </span>
-        <span className="text-muted-foreground ml-1">vs mês anterior</span>
+  <div className={`${height} bg-secondary/20 rounded-lg flex items-center justify-center`}>
+    <div className="text-center">
+      <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+        <Icon className="h-8 w-8 text-primary" />
       </div>
-      <p className="text-xs text-muted-foreground mt-2">{description}</p>
-    </CardContent>
-  </Card>
+      <p className="text-muted-foreground font-medium">{title}</p>
+      <p className="text-sm text-muted-foreground mt-1">{description}</p>
+    </div>
+  </div>
+);
+
+const HeatmapComponent = () => (
+  <div className="h-80 bg-secondary/20 rounded-lg p-4">
+    <div className="h-full border-2 border-dashed border-border rounded-lg flex items-center justify-center">
+      <div className="text-center">
+        <MapPin className="h-12 w-12 text-primary mx-auto mb-3" />
+        <p className="text-muted-foreground font-medium">Mapa de Calor Interativo</p>
+        <p className="text-sm text-muted-foreground mt-1">Layout da loja com áreas de calor</p>
+      </div>
+    </div>
+  </div>
 );
 
 export const DashboardContent = () => {
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: new Date(),
+    to: new Date()
+  });
+  const [gender, setGender] = useState('all');
+  const [store, setStore] = useState('all');
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Analytics Dashboard</h1>
         <p className="text-muted-foreground">
-          Visão geral do desempenho das suas lojas em tempo real
+          Visão completa do comportamento dos clientes e performance das lojas
         </p>
       </div>
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricCard
-          title="Visitantes Hoje"
-          value="2,847"
-          change="+12.5%"
-          changeType="positive"
-          icon={Users}
-          description="Fluxo de pessoas detectadas"
-        />
-        <MetricCard
-          title="Tempo Médio"
-          value="18m 32s"
-          change="+5.2%"
-          changeType="positive"
-          icon={Clock}
-          description="Permanência média na loja"
-        />
-        <MetricCard
-          title="Taxa de Conversão"
-          value="3.8%"
-          change="-2.1%"
-          changeType="negative"
-          icon={TrendingUp}
-          description="Visitantes que compraram"
-        />
-        <MetricCard
-          title="Receita/Visitante"
-          value="R$ 42,15"
-          change="+8.7%"
-          changeType="positive"
-          icon={DollarSign}
-          description="Ticket médio por pessoa"
-        />
-      </div>
+      {/* Global Filters */}
+      <FilterBar 
+        dateRange={dateRange}
+        setDateRange={setDateRange}
+        gender={gender}
+        setGender={setGender}
+        store={store}
+        setStore={setStore}
+      />
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Visitor Flow Chart */}
-        <Card className="bg-gradient-card border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <Activity className="h-5 w-5 text-primary" />
-              Fluxo de Visitantes (Últimas 24h)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 bg-secondary/20 rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Activity className="h-8 w-8 text-primary" />
-                </div>
-                <p className="text-muted-foreground">Gráfico de fluxo de visitantes</p>
-                <p className="text-sm text-muted-foreground mt-1">Dados em tempo real</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Tabbed Interface */}
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:grid-cols-3">
+          <TabsTrigger value="overview" className="text-sm">Overview</TabsTrigger>
+          <TabsTrigger value="zones" className="text-sm">Zone Analysis</TabsTrigger>
+          <TabsTrigger value="behavioral" className="text-sm">Behavioral Insights</TabsTrigger>
+        </TabsList>
 
-        {/* Heatmap */}
-        <Card className="bg-gradient-card border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <Eye className="h-5 w-5 text-primary" />
-              Mapa de Calor da Loja
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 bg-secondary/20 rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Eye className="h-8 w-8 text-success" />
-                </div>
-                <p className="text-muted-foreground">Visualização do mapa de calor</p>
-                <p className="text-sm text-muted-foreground mt-1">Áreas mais visitadas</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Activity */}
-      <Card className="bg-gradient-card border-border">
-        <CardHeader>
-          <CardTitle className="text-foreground">Atividade Recente</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {[
-              { time: '14:32', event: 'Pico de movimento detectado na entrada', type: 'info' },
-              { time: '14:28', event: 'Fila excedeu 5 pessoas no caixa 1', type: 'warning' },
-              { time: '14:25', event: 'Nova conversão registrada', type: 'success' },
-              { time: '14:20', event: 'Cliente com tempo prolongado na seção eletrônicos', type: 'info' },
-              { time: '14:15', event: 'Sistema iniciado com sucesso', type: 'success' },
-            ].map((activity, index) => (
-              <div key={index} className="flex items-center justify-between py-3 border-b border-border last:border-0">
-                <div className="flex items-center space-x-3">
-                  <div className={`w-2 h-2 rounded-full ${
-                    activity.type === 'success' ? 'bg-success' :
-                    activity.type === 'warning' ? 'bg-warning' :
-                    'bg-primary'
-                  }`} />
-                  <span className="text-foreground">{activity.event}</span>
-                </div>
-                <span className="text-sm text-muted-foreground">{activity.time}</span>
-              </div>
-            ))}
+        {/* Tab 1: Overview */}
+        <TabsContent value="overview" className="space-y-6">
+          {/* KPI Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <KPICard
+              title="Current Store Occupancy"
+              value="142"
+              change="+12.5%"
+              changeType="positive"
+              icon={<Users />}
+            />
+            <KPICard
+              title="Total Visitors"
+              value="2,847"
+              change="+8.3%"
+              changeType="positive"
+              icon={<Eye />}
+            />
+            <KPICard
+              title="Peak Hour"
+              value="14:30"
+              change="15min earlier"
+              changeType="neutral"
+              icon={<Clock />}
+            />
           </div>
-        </CardContent>
-      </Card>
+
+          {/* Main Chart */}
+          <Card className="bg-gradient-card border-border">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-foreground">
+                <Activity className="h-5 w-5 text-primary" />
+                Store Traffic Rhythm
+              </CardTitle>
+              <CardDescription>
+                Ocupação total da loja ao longo do período selecionado
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <MockChart 
+                title="Gráfico de Linha - Ritmo de Tráfego"
+                description="Mostra a ocupação ao longo do tempo"
+                icon={Activity}
+                height="h-80"
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Tab 2: Zone Analysis */}
+        <TabsContent value="zones" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Column */}
+            <div className="space-y-6">
+              <Card className="bg-gradient-card border-border">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <BarChart3 className="h-5 w-5 text-primary" />
+                    Zone Occupancy Comparison
+                  </CardTitle>
+                  <CardDescription>
+                    Comparação de ocupação entre diferentes zonas
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <MockChart 
+                    title="Gráfico Multi-Linha"
+                    description="Ocupação por zona ao longo do tempo"
+                    icon={BarChart3}
+                  />
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-card border-border">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <Timer className="h-5 w-5 text-primary" />
+                    Average Dwell Time by Zone
+                  </CardTitle>
+                  <CardDescription>
+                    Tempo médio de permanência em cada zona
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <MockChart 
+                    title="Gráfico de Barras Horizontal"
+                    description="Tempo de permanência por zona"
+                    icon={Timer}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column - Heatmap */}
+            <Card className="bg-gradient-card border-border">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-foreground">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  Interactive Store Heatmap
+                </CardTitle>
+                <CardDescription>
+                  Visualização interativa do layout da loja
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <HeatmapComponent />
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Tab 3: Behavioral Insights */}
+        <TabsContent value="behavioral" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <Card className="bg-gradient-card border-border">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-foreground">
+                  <Zap className="h-5 w-5 text-primary" />
+                  First Interaction
+                </CardTitle>
+                <CardDescription>
+                  Funil de primeira interação dos clientes
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MockChart 
+                  title="Funil Chart"
+                  description="Jornada inicial do cliente"
+                  icon={Zap}
+                />
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card border-border">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-foreground">
+                  <Target className="h-5 w-5 text-primary" />
+                  Zone Engagement Rate
+                </CardTitle>
+                <CardDescription>
+                  Taxa de engajamento por zona da loja
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MockChart 
+                  title="Gráfico de Barras Agrupadas"
+                  description="Engajamento por zona e período"
+                  icon={Target}
+                />
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card border-border lg:col-span-2 xl:col-span-1">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-foreground">
+                  <ArrowRight className="h-5 w-5 text-primary" />
+                  Product Affinity & Zone Transitions
+                </CardTitle>
+                <CardDescription>
+                  Fluxo de transições entre zonas
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MockChart 
+                  title="Diagrama Sankey"
+                  description="Fluxo de movimento entre zonas"
+                  icon={ArrowRight}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
