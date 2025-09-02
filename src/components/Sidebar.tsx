@@ -11,7 +11,8 @@ import {
   Home,
   Users,
   Camera,
-  TrendingUp
+  TrendingUp,
+  Brain
 } from 'lucide-react';
 import nortLogo from '@/assets/nort-logo.png';
 
@@ -44,6 +45,12 @@ const menuItems = [
     label: 'Câmeras',
     icon: Camera,
     description: 'Gestão de dispositivos'
+  },
+  {
+    id: 'ai-analyst',
+    label: 'AI Analyst',
+    icon: Brain,
+    description: 'Análise com IA'
   },
   {
     id: 'insights',

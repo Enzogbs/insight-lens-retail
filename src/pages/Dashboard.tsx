@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { Sidebar } from '@/components/Sidebar';
 import { DashboardContent } from '@/components/DashboardContent';
+import { ReportsContent } from '@/components/ReportsContent';
+import { CamerasContent } from '@/components/CamerasContent';
+import { SettingsContent } from '@/components/SettingsContent';
+import { AIAnalystContent } from '@/components/AIAnalystContent';
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -20,25 +24,11 @@ export default function Dashboard() {
           </div>
         );
       case 'reports':
-        return (
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-foreground">Relatórios</h1>
-            <p className="text-muted-foreground">Geração e download de relatórios personalizados.</p>
-            <div className="h-96 bg-gradient-card border border-border rounded-lg flex items-center justify-center">
-              <span className="text-muted-foreground">Página de relatórios em desenvolvimento</span>
-            </div>
-          </div>
-        );
+        return <ReportsContent />;
       case 'cameras':
-        return (
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-foreground">Gestão de Câmeras</h1>
-            <p className="text-muted-foreground">Configuração e monitoramento de dispositivos conectados.</p>
-            <div className="h-96 bg-gradient-card border border-border rounded-lg flex items-center justify-center">
-              <span className="text-muted-foreground">Página de câmeras em desenvolvimento</span>
-            </div>
-          </div>
-        );
+        return <CamerasContent />;
+      case 'ai-analyst':
+        return <AIAnalystContent />;
       case 'insights':
         return (
           <div className="space-y-6">
@@ -60,15 +50,7 @@ export default function Dashboard() {
           </div>
         );
       case 'settings':
-        return (
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-foreground">Configurações</h1>
-            <p className="text-muted-foreground">Configurações gerais do sistema e preferências.</p>
-            <div className="h-96 bg-gradient-card border border-border rounded-lg flex items-center justify-center">
-              <span className="text-muted-foreground">Página de configurações em desenvolvimento</span>
-            </div>
-          </div>
-        );
+        return <SettingsContent />;
       default:
         return <DashboardContent />;
     }
