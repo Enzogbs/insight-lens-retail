@@ -5,8 +5,14 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Users, BarChart3, Clock, MapPin, Camera, Shield, Zap, TrendingUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Features() {
+  const navigate = useNavigate();
+  
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
   const advancedFeatures = [
     {
       icon: Camera,
@@ -36,7 +42,7 @@ export default function Features() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header variant="landing" />
+      <Header variant="landing" onLoginClick={handleLoginClick} />
       
       <main className="pt-20">
         {/* Hero Section */}

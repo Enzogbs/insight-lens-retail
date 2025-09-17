@@ -5,8 +5,14 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, ArrowRight, Camera, Cpu, BarChart3, Settings, Download, Shield } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function HowItWorks() {
+  const navigate = useNavigate();
+  
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
   const detailedSteps = [
     {
       step: "01",
@@ -78,7 +84,7 @@ export default function HowItWorks() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header variant="landing" />
+      <Header variant="landing" onLoginClick={handleLoginClick} />
       
       <main className="pt-20">
         {/* Hero Section */}

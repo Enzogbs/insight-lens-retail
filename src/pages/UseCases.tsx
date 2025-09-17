@@ -5,8 +5,14 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Building2, Pill, Coffee, Car, Home } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function UseCases() {
+  const navigate = useNavigate();
+  
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
   const industries = [
     {
       icon: ShoppingCart,
@@ -78,7 +84,7 @@ export default function UseCases() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header variant="landing" />
+      <Header variant="landing" onLoginClick={handleLoginClick} />
       
       <main className="pt-20">
         {/* Hero Section */}

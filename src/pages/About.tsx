@@ -2,11 +2,18 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Card } from '@/components/ui/card';
 import { Users, Target, Award, Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function About() {
+  const navigate = useNavigate();
+  
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <Header variant="landing" />
+      <Header variant="landing" onLoginClick={handleLoginClick} />
       
       <main className="pt-20">
         {/* Hero Section */}

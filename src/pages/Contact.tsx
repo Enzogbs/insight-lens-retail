@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +13,12 @@ import { useToast } from '@/hooks/use-toast';
 import { Mail, Phone, MapPin, Clock, Send, Calendar } from 'lucide-react';
 
 export default function Contact() {
+  const navigate = useNavigate();
+  
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -43,7 +50,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header variant="landing" />
+      <Header variant="landing" onLoginClick={handleLoginClick} />
       
       <main className="pt-20">
         {/* Hero Section */}
