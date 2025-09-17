@@ -2,10 +2,13 @@ import { Header } from '@/components/Header';
 import { HeroSection } from '@/components/HeroSection';
 import { TestimonialsSection } from '@/components/TestimonialsSection';
 import { Footer } from '@/components/Footer';
+import { useNavigate } from 'react-router-dom';
 
 export default function Landing() {
+  const navigate = useNavigate();
+  
   const handleLoginClick = () => {
-    window.location.href = '/login';
+    navigate('/login');
   };
 
   return (
