@@ -2,16 +2,13 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { 
-  BarChart3, 
   FileText, 
   Settings, 
   LogOut, 
   Menu, 
   X,
   Home,
-  Users,
   Camera,
-  TrendingUp,
   Brain
 } from 'lucide-react';
 import nortLogo from '@/assets/nort-logo.png';
@@ -27,12 +24,6 @@ const menuItems = [
     label: 'Dashboard',
     icon: Home,
     description: 'Visão geral dos dados'
-  },
-  {
-    id: 'analytics',
-    label: 'Análises',
-    icon: BarChart3,
-    description: 'Métricas detalhadas'
   },
   {
     id: 'reports',
@@ -51,18 +42,6 @@ const menuItems = [
     label: 'AI Analyst',
     icon: Brain,
     description: 'Análise com IA'
-  },
-  {
-    id: 'insights',
-    label: 'Insights',
-    icon: TrendingUp,
-    description: 'Insights avançados'
-  },
-  {
-    id: 'users',
-    label: 'Usuários',
-    icon: Users,
-    description: 'Gestão de usuários'
   },
   {
     id: 'settings',

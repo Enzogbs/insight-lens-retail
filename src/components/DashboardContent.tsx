@@ -17,7 +17,6 @@ import {
   PieChart,
   TrendingDown,
   Eye,
-  MapPin,
   Timer,
   Zap,
   Target,
@@ -206,17 +205,6 @@ const MockChart = ({ title, description, icon: Icon, height = "h-64" }: {
   </div>
 );
 
-const HeatmapComponent = () => (
-  <div className="h-80 bg-secondary/20 rounded-lg p-4">
-    <div className="h-full border-2 border-dashed border-border rounded-lg flex items-center justify-center">
-      <div className="text-center">
-        <MapPin className="h-12 w-12 text-primary mx-auto mb-3" />
-        <p className="text-muted-foreground font-medium">Mapa de Calor Interativo</p>
-        <p className="text-sm text-muted-foreground mt-1">Layout da loja com áreas de calor</p>
-      </div>
-    </div>
-  </div>
-);
 
 export const DashboardContent = () => {
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
@@ -305,61 +293,42 @@ export const DashboardContent = () => {
 
         {/* Tab 2: Zone Analysis */}
         <TabsContent value="zones" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Left Column */}
-            <div className="space-y-6">
-              <Card className="bg-gradient-card border-border">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <BarChart3 className="h-5 w-5 text-primary" />
-                    Zone Occupancy Comparison
-                  </CardTitle>
-                  <CardDescription>
-                    Comparação de ocupação entre diferentes zonas
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <MockChart 
-                    title="Gráfico Multi-Linha"
-                    description="Ocupação por zona ao longo do tempo"
-                    icon={BarChart3}
-                  />
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-card border-border">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <Timer className="h-5 w-5 text-primary" />
-                    Average Dwell Time by Zone
-                  </CardTitle>
-                  <CardDescription>
-                    Tempo médio de permanência em cada zona
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <MockChart 
-                    title="Gráfico de Barras Horizontal"
-                    description="Tempo de permanência por zona"
-                    icon={Timer}
-                  />
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Right Column - Heatmap */}
+          <div className="space-y-6">
             <Card className="bg-gradient-card border-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-foreground">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  Interactive Store Heatmap
+                  <BarChart3 className="h-5 w-5 text-primary" />
+                  Zone Occupancy Comparison
                 </CardTitle>
                 <CardDescription>
-                  Visualização interativa do layout da loja
+                  Comparação de ocupação entre diferentes zonas
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <HeatmapComponent />
+                <MockChart 
+                  title="Gráfico Multi-Linha"
+                  description="Ocupação por zona ao longo do tempo"
+                  icon={BarChart3}
+                />
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card border-border">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-foreground">
+                  <Timer className="h-5 w-5 text-primary" />
+                  Average Dwell Time by Zone
+                </CardTitle>
+                <CardDescription>
+                  Tempo médio de permanência em cada zona
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MockChart 
+                  title="Gráfico de Barras Horizontal"
+                  description="Tempo de permanência por zona"
+                  icon={Timer}
+                />
               </CardContent>
             </Card>
           </div>
