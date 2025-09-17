@@ -9,7 +9,8 @@ import {
   X,
   Home,
   Camera,
-  Brain
+  Brain,
+  BarChart3
 } from 'lucide-react';
 import nortLogo from '@/assets/nort-logo.png';
 
@@ -24,6 +25,12 @@ const menuItems = [
     label: 'Dashboard',
     icon: Home,
     description: 'Visão geral dos dados'
+  },
+  {
+    id: 'store-comparison',
+    label: 'Comparação',
+    icon: BarChart3,
+    description: 'Análise entre lojas'
   },
   {
     id: 'reports',
